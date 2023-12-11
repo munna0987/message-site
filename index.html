@@ -5,7 +5,70 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Chat</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+#login-container, #chat-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#login-container h2, #chat-container h2 {
+    text-align: center;
+}
+
+#login-form, #message-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#login-form label, #message-form label {
+    margin-bottom: 10px;
+}
+
+#login-form input, #message-form input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#login-form button, #message-form button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#login-form button:hover, #message-form button:hover {
+    background-color: #45a049;
+}
+
+#message-container {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+#message-container img, #message-container video {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+}
+
+    </style>
 </head>
 <body>
     <div id="login-container">
@@ -26,6 +89,60 @@
         <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleFile()">
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        let password;
+let isLoggedIn = false;
+
+function login() {
+    password = document.getElementById("password").value;
+
+    // Add your authentication logic here, for simplicity, just check if the password is not empty
+    if (password.trim() !== "") {
+        isLoggedIn = true;
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("chat-container").style.display = "block";
+    } else {
+        alert("Invalid password. Please try again.");
+    }
+}
+
+function sendMessage() {
+    if (isLoggedIn) {
+        const message = document.getElementById("message").value;
+        if (message.trim() !== "") {
+            displayMessage(message);
+            document.getElementById("message").value = "";
+        }
+    } else {
+        alert("Please login first.");
+    }
+}
+
+function displayMessage(message) {
+    const messageContainer = document.getElementById("message-container");
+    const messageElement = document.createElement("div");
+    messageElement.textContent = message;
+    messageContainer.appendChild(messageElement);
+}
+
+function handleFile() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const mediaType = file.type.startsWith("image/") ? "img" : "video";
+            const mediaElement = document.createElement(mediaType);
+            mediaElement.src = e.target.result;
+            mediaElement.controls = true;
+            displayMessage(mediaElement);
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+    </script>
 </body>
 </html>
